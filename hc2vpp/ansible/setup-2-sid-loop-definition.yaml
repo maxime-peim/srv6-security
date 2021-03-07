@@ -1,0 +1,45 @@
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: Configure Node 1 SRv6 SIDs LOOP
+    netconf_config:
+      host: node1
+      port: 2831
+      hostkey_verify: no
+      username: admin
+      password: admin
+      xml: |
+        <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <routing xmlns="urn:ietf:params:xml:ns:yang:ietf-routing">
+            <srv6 xmlns="urn:ietf:params:xml:ns:yang:ietf-srv6-base">
+              <locators>
+                <locator>
+                  <name>fd11::</name>
+                  <enable>true</enable>
+                  <is-default>false</is-default>
+                  <prefix>
+                    <address>fd11::</address>
+                    <length>64</length>-
+                  </prefix>
+                  <static xmlns="urn:ietf:params:xml:ns:yang:ietf-srv6-static">
+                    <local-sids>
+                      <sid>
+                        <opcode>122541</opcode> <!-- ::1:dead -->
+                        <end-behavior-type xmlns:ietf-srv6-types="urn:ietf:params:xml:ns:yang:ietf-srv6-types">ietf-srv6-types:End.DT6</end-behavior-type>
+                        <end-dt6>
+                          <!-- lookup in FIB index 0 (base one) -->
+                          <lookup-table-ipv6>0</lookup-table-ipv6>
+                        </end-dt6>
+                      </sid>
+                    </local-sids>
+                  </static>
+                  <fib-table xmlns="urn:hc2vpp:params:xml:ns:yang:vpp-ietf-srv6-base">
+                    <table-id>0</table-id>
+                    <address-family xmlns:vpp-fib-table-management="urn:opendaylight:params:xml:ns:yang:vpp-fib-table-management">vpp-fib-table-management:ipv6</address-family>
+                  </fib-table>
+                </locator>
+              </locators>
+            </srv6>
+          </routing>
+        </config>

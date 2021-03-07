@@ -1,0 +1,25 @@
+- hosts: localhost
+  gather_facts: no
+  connection: local
+  tasks:
+  - name: Configure Node 3 SID Connectivity LOOP
+    netconf_config:
+      host: node3
+      port: 2831
+      hostkey_verify: no
+      username: admin
+      password: admin
+      xml: |
+        <config xmlns:xc="urn:ietf:params:xml:ns:netconf:base:1.0">
+          <interfaces xmlns="urn:ietf:params:xml:ns:yang:ietf-interfaces">
+            <interface>
+              <name>host-eth0</name>
+              <ipv6 xmlns="urn:ietf:params:xml:ns:yang:ietf-ip">
+                <neighbor>
+                  <ip>fd11::1:dead</ip>
+                  <link-layer-address>00:00:00:00:13:10</link-layer-address>
+                </neighbor>
+              </ipv6>
+            </interface>
+          </interfaces>
+        </config>
